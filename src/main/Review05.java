@@ -1,4 +1,4 @@
-package jp.co.kiramex.dbkadai.model;
+package main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 public class Review05 {
 
-    public static void main1(String[] args) {
+    public static void main(String[] args) {
         // 3. データベース接続と結果取得のための変数宣言
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -26,25 +26,24 @@ public class Review05 {
                         "root",
                         "Gorbej-2hokho-jecfyq"
                         );
-
-                // 4.Dbとやりとりする窓口（PreparedStatementオブジェクト）の作成
-                String sql = "SELECT * FROM id WHERE age = ?";
+                String sql = "SELECT * FROM person WHERE id = ?";
+                // 3.DBとやりとりする窓口（PreparedStatementオブジェクト）の作成
                 pstmt = con.prepareStatement(sql);
-                //5, 6. Select文の実行と結果を格納／代入
+                //4, 5. Select文の実行と結果を格納／代入
                 System.out.print("検索キーワードを入力してください > ");
-                String input = keyIn();
+                int input = Integer.parseInt(keyIn());
              // PreparedStatementオブジェクトの?に値をセット  // ← 追記
                 pstmt.setInt(1, input);  // ← 追記
 
                 rs = pstmt.executeQuery();  // ← 修正
 
-                // 7. 結果を表示する
-                while(rs.next()) {
+                // 6. 更新前の結果を表示する
+                while(rs.next() ) {
                     // Name列の値を取得
-                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
                     int age = rs.getInt("age");
                     //取得した値を表示
-                    System.out.println(id);
+                    System.out.println(name);
                     System.out.println(age);
                 }
             } catch (ClassNotFoundException e) {
@@ -53,11 +52,12 @@ public class Review05 {
             }catch (SQLException e) {
                 System.err.println("データベースに異常が発生しました。");
                 e.printStackTrace();
-            } finally {
-                // 8. 接続を閉じる
-                if( con != null ){
+            }
+            finally {
+                // 7. 接続を閉じる
+                if( rs != null ){
                     try {
-                        con.close();
+                        rs.close();
                     } catch (SQLException e) {
                         System.err.println("データベース切断時にエラーが発生しました。");
                         e.printStackTrace();
@@ -72,7 +72,8 @@ public class Review05 {
     private static String keyIn() {
         String line = null;
         try {
-            BufferedReader key = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader key = new BufferedReader(new InputStreamReader(
+                    System.in));
             line = key.readLine();
         } catch (IOException e) {
 
